@@ -88,8 +88,8 @@ Views.dashboard = (() => {
       ]));
 
       renderCharts(root, data);
-      container.appendChild(root);
       renderRecentTransactions(root);
+      return root;
     });
   }
 
