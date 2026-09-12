@@ -1,1 +1,59 @@
+name: Build Aplikasi Windows (.exe)
 
+# Cara pakai:
+#  1) Push folder ini ke repository GitHub.
+#  2) Buka tab "Actions" di repo -> pilih workflow "Build Aplikasi Windows (.exe)" -> "Run workflow".
+#     (atau otomatis berjalan setiap push ke branch main/master, dan setiap tag "v*")
+#  3) Setelah selesai (±5-10 menit), buka hasil run tersebut -> bagian "Artifacts" ->
+#     unduh "LaporanKeuangan-Windows" (isinya file Setup .exe dan Portable .exe).
+#  4) Jika push dalam bentuk tag (contoh: v1.0.0), file .exe juga otomatis
+#     dilampirkan ke halaman "Releases" repo ini.
+
+on:
+  push:
+    branches: [main, master]
+    tags: ['v*']
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch: {}
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout kode
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependensi (npm ci)
+        run: npm ci
+
+      - name: Build installer & portable .exe
+        run: npm run dist
+
+      - name: Daftar file hasil build
+        run: dir dist
+        shell: cmd
+
+      - name: Unggah artifact (.exe)
+        uses: actions/upload-artifact@v4
+        with:
+          name: LaporanKeuangan-Windows
+          path: |
+            dist/*.exe
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Buat GitHub Release (khusus saat push tag v*)
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*.exe
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
