@@ -26,6 +26,7 @@
     "appId": "com.laporankeuangan.app",
     "productName": "Laporan Keuangan",
     "copyright": "Copyright © 2026",
+    "publish": null,
     "asar": true,
     "asarUnpack": [
       "node_modules/better-sqlite3/**/*"
