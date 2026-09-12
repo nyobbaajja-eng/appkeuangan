@@ -57,10 +57,10 @@ const Modal = (() => {
   function confirm({ title = 'Konfirmasi', message, confirmText = 'Ya, Lanjutkan', cancelText = 'Batal', danger = false } = {}) {
     return new Promise((resolve) => {
       const footer = Utils.el('div', { class: 'modal__actions' }, [
-        Utils.el('button', { class: 'btn btn--ghost', onclick: () => { instance.close(); resolve(false); } }, cancelText),
+        Utils.el('button', { class: 'btn btn--ghost', onclick: () => { resolve(false); instance.close(); } }, cancelText),
         Utils.el('button', {
           class: `btn ${danger ? 'btn--danger' : 'btn--primary'}`,
-          onclick: () => { instance.close(); resolve(true); }
+          onclick: () => { resolve(true); instance.close(); }
         }, confirmText)
       ]);
       const instance = open({
